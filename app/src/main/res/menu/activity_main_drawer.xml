@@ -6,11 +6,11 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/image_fragment"
-            android:icon="@drawable/ic_launcher_foreground"
+            android:icon="@drawable/ic_baseline_people_alt_24"
             android:title="@string/menu_image" />
         <item
             android:id="@+id/map_fragment"
-            android:icon="@drawable/abc_vector_test"
+            android:icon="@drawable/ic_baseline_map_24"
             android:title="@string/menu_map" />
     </group>
 </menu>

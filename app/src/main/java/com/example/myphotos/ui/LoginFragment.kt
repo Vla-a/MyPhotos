@@ -31,8 +31,6 @@ class LoginFragment: Fragment() {
         binding!!.btnSubmit.setOnClickListener {
 
             userViewModel.userLiveData2.observe(this.viewLifecycleOwner,{
-                binding!!.textView.text = "token: ${it.token}"
-
 
                 startActivity(
                     Intent(activity, UserActivity::class.java))
