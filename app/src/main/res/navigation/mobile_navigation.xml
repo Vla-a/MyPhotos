@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/image_fragment">
+
+    <fragment
+        android:id="@+id/image_fragment"
+        android:name="com.example.myphotos.ui.image.ImageFragment"
+        android:label="@string/menu_image"
+        tools:layout="@layout/image_fragment" >
+    <action
+    android:id="@+id/toFragmentDetails"
+    app:destination="@id/fragmentDetails"/>
+</fragment>
+
+<fragment
+android:id="@+id/fragmentDetails"
+android:name="com.example.myphotos.ui.detailImage.DetailImageFragment"
+android:label="CallScheduleFragment"
+tools:layout="@layout/fragment_detail_image">
+
+</fragment>
+
+    <fragment
+        android:id="@+id/map_fragment"
+        android:name="com.example.myphotos.ui.map.MapFragment"
+        android:label="@string/menu_map"
+        tools:layout="@layout/map_fragment" />
+
+
+</navigation>

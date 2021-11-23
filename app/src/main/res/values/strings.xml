@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">MyPhotos</string>
+    <string name="LOG_IN">LOG IN</string>
+    <string name="SING_UP">SING UP</string>
+
+    <string name="toolbar_name">RADIO</string>
+    <string name="popular">Popular</string>
+    <string name="all_stations">All</string>
+    <string name="favourite">Favourite</string>
+    <string name="player">Player</string>
+    <string name="radio">Radio</string>
+    <string name="pause">pause</string>
+    <string name="play">play</string>
+    <string name="stop">stop</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_image">Image</string>
+    <string name="menu_map">Map</string>
+    <string name="menu_slideshow">Slideshow</string>
+</resources>
