@@ -14,7 +14,8 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
-
+import java.lang.Math.log
+import java.util.concurrent.TimeUnit
 import java.util.*
 
 
@@ -29,7 +30,7 @@ interface RegistrApi {
 
     @POST( "/api/account/signin")
     suspend fun getUser (
-        @Body userDto: JsonObject = com.example.testcurrency.restApi.getUser()
+        @Body userDto: JsonObject
     ): Response<RegistrResponce>
 
 
@@ -49,6 +50,9 @@ interface RegistrApi {
             .addConverterFactory(GsonConverterFactory.create())
             .client(
                 OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(10, TimeUnit.SECONDS)
+                    .writeTimeout(10, TimeUnit.SECONDS)
                     .addInterceptor(HttpLoggingInterceptor().apply {
                         level = HttpLoggingInterceptor.Level.BODY
                     }).build()
@@ -70,20 +74,4 @@ private fun getConvertedinJson(): JsonObject {
     Log.v("JObj", "$`object`")
     return `object`
 }
-
-
-private fun getUser(): JsonObject {
-    val `object` = JsonObject()
-    try {
-
-        `object`.addProperty("login", "vova.liv@tut.by",)
-        `object`.addProperty("password", "123456789")
-    } catch (e: JSONException) {
-
-        e.printStackTrace()
-    }
-    Log.v("JObj", "$`object`")
-    return `object`
-}
-
 

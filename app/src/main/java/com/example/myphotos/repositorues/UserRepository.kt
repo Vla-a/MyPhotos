@@ -1,7 +1,9 @@
 package com.example.myphotos.repositorues
 
+import android.provider.VoicemailContract
 import com.example.myphotos.data.User
 import com.example.testcurrency.restApi.RegistrApi
+import com.google.gson.JsonObject
 
 class UserRepository(  private val registrApi: RegistrApi) {
 
@@ -17,9 +19,10 @@ class UserRepository(  private val registrApi: RegistrApi) {
         }
     }
 
-    suspend fun getUser (): User? {
+    suspend fun getUser (userDto: JsonObject): User {
 
-        val getUser = registrApi.getUser().body()!!.data
+        val getUser = registrApi.getUser(userDto)
+            .body()!!.data
         return  User(
                         userId = getUser.userId,
                         login = getUser.login,
@@ -27,3 +30,4 @@ class UserRepository(  private val registrApi: RegistrApi) {
                     )
                 }
 }
+
