@@ -17,16 +17,13 @@ class UserRepository(  private val registrApi: RegistrApi) {
         }
     }
 
-    suspend fun getUser (): User? = registrApi.getUser().body()?.data?.userId?.let {
-        registrApi.getUser().body()?.data?.login?.let { it1 ->
-            registrApi.getUser().body()?.data?.token?.let { it2 ->
-                User(
-                    userId = it,
-                    login = it1,
-                    token = it2
-                )
-            }
-        }
-    }
+    suspend fun getUser (): User? {
 
+        val getUser = registrApi.getUser().body()!!.data
+        return  User(
+                        userId = getUser.userId,
+                        login = getUser.login,
+                        token = getUser.token
+                    )
+                }
 }

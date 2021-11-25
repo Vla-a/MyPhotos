@@ -19,6 +19,8 @@ import com.example.myphotos.ui.image.ImageFragment.Companion.KEY1
 import com.example.myphotos.ui.image.ImageFragment.Companion.KEY2
 import com.example.myphotos.ui.image.ImageFragment.Companion.TEST
 import org.koin.android.viewmodel.ext.android.viewModel
+import java.text.SimpleDateFormat
+import java.util.*
 
 class DetailImageFragment : Fragment() {
 
@@ -61,7 +63,12 @@ class DetailImageFragment : Fragment() {
             })
 
             binding!!.btnNote.setOnClickListener {
-                val newNote = Note(binding!!.edit.text.toString(), date, uri)
+                val time = SimpleDateFormat(
+                    "dd.MM.yyyy HH:mm",
+                    Locale.ROOT
+                ).format(System.currentTimeMillis())
+
+                val newNote = Note(binding!!.edit.text.toString(), time, uri)
                 if (binding!!.edit.text.toString().trim().isNotBlank()) {
                     addNote(newNote)
                     binding!!.edit.setText("")

@@ -130,18 +130,18 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         // добовляем маркер с цветом
-        mMap.addMarker(
-            MarkerOptions().position(LatLng(11.0, 10.0))
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-            )
-
-        // добовляем маркер с картинкой
-        val icon = vectorToBitmap(R.drawable.ic_baseline_airplane_ticket_24,resources.getColor(R.color.cardview_dark_background))
-        mMap.addMarker(
-            MarkerOptions().position(LatLng(10.0, 10.0))
-                .title("gggggggg")
-               .icon(icon)
-        )
+//        mMap.addMarker(
+//            MarkerOptions().position(LatLng(11.0, 10.0))
+//                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+//            )
+//
+//        // добовляем маркер с картинкой
+//        val icon = vectorToBitmap(R.drawable.ic_baseline_airplane_ticket_24,resources.getColor(R.color.cardview_dark_background))
+//        mMap.addMarker(
+//            MarkerOptions().position(LatLng(10.0, 10.0))
+//                .title("gggggggg")
+//               .icon(icon)
+//        )
         // добовляем маркеры
         val icons = vectorToBitmap(R.drawable.ic_baseline_photo_24,resources.getColor(R.color.cardview_dark_background))
         imageViewModel.photoListLiveData.observe(this.viewLifecycleOwner, {

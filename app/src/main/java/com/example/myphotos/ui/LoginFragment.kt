@@ -32,10 +32,9 @@ class LoginFragment: Fragment() {
 
             userViewModel.userLiveData2.observe(this.viewLifecycleOwner,{
 
-                startActivity(
-                    Intent(activity, UserActivity::class.java))
             })
-
+            startActivity(
+                Intent(activity, UserActivity::class.java))
         }
 
     }
