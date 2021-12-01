@@ -1,36 +1,44 @@
 package com.example.myphotos.ui.image
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.myphotos.R
-import com.example.myphotos.data.Photo
 import com.example.myphotos.adapters.PhotoAdapter
-import com.example.myphotos.utilites.Utility
+import com.example.myphotos.data.AddPhotoreqwest
+import com.example.myphotos.data.Photo
+import com.example.myphotos.data.User
 import com.example.myphotos.databinding.ImageFragmentBinding
 import com.example.myphotos.ui.UserActivity
+import com.example.myphotos.utilites.Utility
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.gson.JsonObject
 import kotlinx.io.ByteArrayOutputStream
-import org.json.JSONException
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.util.*
+import android.R
+import com.example.myphotos.data.Note
+import com.example.myphotos.ui.detailImage.NoteViewModel
 
 
 class ImageFragment : Fragment() {
@@ -40,6 +48,7 @@ class ImageFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var list: MutableList<Photo> = mutableListOf()
     val imageViewModel: ImageViewModel by viewModel()
+    val viewModel: NoteViewModel by viewModel()
     private var binding: ImageFragmentBinding? = null
 
     override fun onCreateView(
@@ -88,7 +97,7 @@ class ImageFragment : Fragment() {
         this.findNavController().navigate(ImageFragmentDirections.toFragmentDetails())
         setFragmentResult(TEST, Bundle().apply {
             putString(KEY1, photo.url)
-            putString(KEY2, photo.date)
+            putLong(KEY2, photo.id)
         })
     }
 
@@ -98,35 +107,75 @@ class ImageFragment : Fragment() {
         startActivityForResult(bInt, REQUEST_CODE)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun encodeImage(bm: Bitmap): String? {
+        val baos = ByteArrayOutputStream()
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val b = baos.toByteArray()
+        return Base64.getEncoder().encodeToString(b)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingPermission")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_TAKE_PHOTO) {
-            val image = data?.extras?.get("data")
-            val uri = this.context?.let { getImageUri(it, image as Bitmap) }
-
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
-                    latitude = location!!.latitude
-                    longitude = location!!.longitude
-                    imageViewModel.addPhotoToDatabase(uri.toString(), latitude, longitude)
-                }
+        if (context?.applicationContext?.let {
+                ContextCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            } != PackageManager.PERMISSION_GRANTED
+        ) {
+            activity?.let {
+                ActivityCompat.requestPermissions(
+                    it, arrayOf(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_NETWORK_STATE
+                    ), 2
+                )
+            }
         } else {
-            super.onActivityResult(requestCode, resultCode, data)
+            if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_TAKE_PHOTO) {
+                val image = data?.extras?.get("data") as Bitmap
+//                val uri = this.context?.let { getImageUri(it, image) }
+
+                val encodir = encodeImage(image)
+                Log.e("KEK", "$encodir")
+
+                fusedLocationClient.lastLocation
+                    .addOnSuccessListener { location: Location? ->
+                        latitude = location!!.latitude
+                        longitude = location!!.longitude
+
+                        var date = Calendar.getInstance().time
+                        val dateTimeAsLong = date.time/3600
+                        val token = (activity as UserActivity).addToken()
+                        val addPhoto =
+                            AddPhotoreqwest(encodir.toString(),dateTimeAsLong, latitude, longitude)
+
+                            imageViewModel.getAddPhoto(addPhoto, token)
+                        imageViewModel.photoLiveData.observe(this.viewLifecycleOwner,{
+                            imageViewModel.addPhotoToDatabase(it)
+                        })
+                    }
+            } else {
+                super.onActivityResult(requestCode, resultCode, data)
+            }
         }
     }
 
-    fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
-        val bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        val path: String = MediaStore.Images.Media.insertImage(
-            inContext.getContentResolver(),
-            inImage,
-            "Title",
-            null
-        )
-        return Uri.parse(path)
-    }
+//    // создать урл для базы данных
+//    fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
+//        val bytes = ByteArrayOutputStream()
+//        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+//        val path: String = MediaStore.Images.Media.insertImage(
+//            inContext.contentResolver,
+//            inImage,
+//            "Title",
+//            null
+//        )
+//        return Uri.parse(path)
+//    }
 
     fun clickListenerDeletePhoto(photo: Photo) {
         val builder = AlertDialog.Builder(this.context)
@@ -135,6 +184,22 @@ class ImageFragment : Fragment() {
             .setPositiveButton("Yes") { dialog, id ->
                 // Delete selected note from database
                 imageViewModel.deletePhoto(photo)
+
+                viewModel.noteListLiveData.observe(this.viewLifecycleOwner, {
+
+                    val list = mutableListOf<Note>()
+                    it.map { i ->
+                            list.add(i)
+                    }
+
+                    list.forEach {
+                       viewModel.deleteNote(it)
+                        }
+                })
+
+
+                val token = (activity as UserActivity).addToken()
+             imageViewModel.deletePhotoNetwork(photo.id,token)
             }
             .setNegativeButton("No") { dialog, id ->
                 // Dismiss the dialog
@@ -144,23 +209,6 @@ class ImageFragment : Fragment() {
         alert.show()
     }
 
-    private fun getAddPhoto(image: Bitmap): JsonObject {
-        val time = Calendar.getInstance().timeInMillis
-        val p = R.drawable.photo
-        val `object` = JsonObject()
-        try {
-
-            `object`.addProperty("base64Image", "$p")
-            `object`.addProperty("date", "1262307723")
-            `object`.addProperty("lat", "53.9")
-            `object`.addProperty("lng", "27.5667")
-        } catch (e: JSONException) {
-
-            e.printStackTrace()
-        }
-        Log.v("JObj", "$`object`")
-        return `object`
-    }
 
     companion object {
 
@@ -171,9 +219,6 @@ class ImageFragment : Fragment() {
         private val REQUEST_CODE = 24
     }
 }
-
-
-
 
 
 

@@ -35,5 +35,5 @@ class NoteViewModel(
         }
     }
 
-    private fun Note.entity() = NotePhotoEntity( 0, this.note, this.date, this.userPhoto)
+    private fun Note.entity() = NotePhotoEntity( this.id, this.note, this.date, this.userPhoto)
 }

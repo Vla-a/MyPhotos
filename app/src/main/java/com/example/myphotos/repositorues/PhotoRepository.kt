@@ -1,5 +1,7 @@
 package com.example.myphotos.repositorues
 
+import com.example.myphotos.data.AddPhotoResponce
+import com.example.myphotos.data.AddPhotoreqwest
 import com.example.myphotos.data.Photo
 import com.example.myphotos.database.PhotoDao
 import com.example.schoolorgonizer.notes.database.PhotoEntity
@@ -12,23 +14,20 @@ class PhotoRepository(
     private val photoDao: PhotoDao
 ) {
 
-//    suspend fun getAddPhoto (body: JsonObject): Photo? = registrApi!!.addPhoto(body).body()?.let {
-//        registrApi!!.addPhoto(body).body()?.let { it1 ->
-//            registrApi!!.addPhoto(body).body()?.let { it2 ->
-//                registrApi!!.addPhoto(body).body()?.let { it3 ->
-//                    registrApi!!.addPhoto(body).body()?.let { it4 ->
-//                        Photo(
-//                            id = it.id,
-//                            url = it1.url,
-//                            date = it2.date,
-//                            lat = it3.lat,
-//                            lng = it4.lng
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
+    suspend fun getAddPhoto(body: AddPhotoreqwest, token: String): Photo{
+        val addPhoto = registrApi.addPhoto(body, token).body()!!.data
+        return Photo(
+            id = addPhoto.id,
+            url = addPhoto.url,
+            date = addPhoto.date,
+            lat = addPhoto.lat,
+            lng = addPhoto.lng
+        )
+    }
+
+    suspend fun deleteAddPhoto(id: Long, token: String){
+        registrApi.deletePhoto(id,token)
+    }
 
     fun gePhotoList(): Flow<List<Photo>> =
         photoDao.getPhotoList().map { photoEntities ->
@@ -43,19 +42,22 @@ class PhotoRepository(
             }
         }
 
-    suspend fun addPhoto(photo: PhotoEntity) {
-        photoDao.addPhoto(photo)
+     fun addPhoto(photo: Photo) {
+         photo.entity()?.let { photoDao.addPhoto(it) }
 
     }
 
     suspend fun deletePhoto(photo: Photo) {
 
-        photoDao.deletePhoto(photo.entity())
+        photo.entity()?.let { photoDao.deletePhoto(it) }
     }
 
-    private fun Photo.entity() = PhotoEntity(this.id, this.url,this.date, this.lat, this.lng)
-
+    private fun Photo.entity() = this.url?.let {
+        PhotoEntity(this.id,
+            it, this.date, this.lat, this.lng)
     }
+
+}
 
 
 

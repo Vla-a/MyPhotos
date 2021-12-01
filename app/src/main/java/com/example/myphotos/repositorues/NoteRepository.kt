@@ -13,17 +13,16 @@ class NoteRepository (
     fun getNoteList(): Flow<List<Note>> =
         noteDao.getsNoteList().map {
             it.map {
-                Note( it.title, it.date, it.userPhoto)
+                Note(it.id, it.title, it.date, it.userPhoto)
             }
         }
 
     suspend fun addNote(note: NotePhotoEntity) {
         noteDao.addNote(note)
-
     }
 
     suspend fun deleteNote(note: NotePhotoEntity) {
-
         noteDao.deleteNote(note)
     }
+
 }

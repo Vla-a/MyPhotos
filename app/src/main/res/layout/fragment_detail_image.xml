@@ -6,14 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <TextView
-        android:id="@+id/textDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="IMAGE"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_view" />
 
     <ImageView
         android:id="@+id/image_view"
@@ -30,9 +22,8 @@
         android:layout_width="match_parent"
         android:layout_height="340dp"
         android:layout_margin="12dp"
-
         app:layout_constraintBottom_toTopOf="@+id/edit"
-        app:layout_constraintTop_toBottomOf="@+id/textDate"
+        app:layout_constraintTop_toBottomOf="@+id/image_view"
         tools:layout_editor_absoluteX="12dp"
         tools:listitem="@layout/item_detail" />
 

@@ -1,15 +1,11 @@
 package com.example.myphotos.ui
 
-import android.content.Context
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.Menu
-import android.view.View
-import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -17,13 +13,13 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.myphotos.R
 import com.example.myphotos.databinding.ActivityUserBinding
+import com.example.myphotos.ui.image.ImageFragment
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.snackbar.Snackbar
 
-class UserActivity: AppCompatActivity()  {
+class UserActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUserBinding
-
+    private var token: String = ""
     private lateinit var appBarConfiguration: AppBarConfiguration
 
 
@@ -35,7 +31,9 @@ class UserActivity: AppCompatActivity()  {
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
-//        binding.appBarMain.fab.setOnClickListener { view ->
+        token = intent.extras?.getString("TOKEN") ?: "No token"
+
+   //        binding.appBarMain.fab.setOnClickListener { view ->
 //            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                .setAction("Action", null).show()
 //        }
@@ -63,4 +61,6 @@ class UserActivity: AppCompatActivity()  {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+    fun addToken() : String = token
 }

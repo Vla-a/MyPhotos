@@ -10,7 +10,7 @@ import com.example.schoolorgonizer.notes.database.PhotoEntity
 )
 class NotePhotoEntity(
 
-    val id: Long = 0L,
+    val id: Long,
 @PrimaryKey val title: String,
     val date: String,
     val userPhoto: String

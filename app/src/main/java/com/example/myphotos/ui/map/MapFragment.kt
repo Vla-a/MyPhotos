@@ -150,7 +150,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
                 val location = LatLng(it.lat, it.lng)
                 mMap!!.addMarker(MarkerOptions().position( location)
-                    .title("${it.url}")
+                    .title("${it.id}")
                     .icon(icons)
                 )
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(location))
@@ -163,7 +163,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     @SuppressLint("MissingPermission")
-    private fun locationWizardry() {
+     fun locationWizardry() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity)
         //Initially, get last known location. We can refine this estimate later
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->

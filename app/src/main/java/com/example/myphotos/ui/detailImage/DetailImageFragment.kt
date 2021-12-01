@@ -43,7 +43,7 @@ class DetailImageFragment : Fragment() {
 
         setFragmentResultListener(TEST) { key, bundle ->
             val uri: String = bundle.getString(KEY1) as String
-            val date: String = bundle.getString(KEY2) as String
+            val id: Long = bundle.getLong(KEY2)
 
             binding!!.rvDetailPhoto.layoutManager =
                 LinearLayoutManager(context, RecyclerView.VERTICAL, false)
@@ -68,7 +68,7 @@ class DetailImageFragment : Fragment() {
                     Locale.ROOT
                 ).format(System.currentTimeMillis())
 
-                val newNote = Note(binding!!.edit.text.toString(), time, uri)
+                val newNote = Note(id,binding!!.edit.text.toString(), time, uri)
                 if (binding!!.edit.text.toString().trim().isNotBlank()) {
                     addNote(newNote)
                     binding!!.edit.setText("")
@@ -84,7 +84,7 @@ class DetailImageFragment : Fragment() {
                     .into(binding!!.imageView)
             }
 
-            binding!!.textDate.text = date
+
         }
     }
 

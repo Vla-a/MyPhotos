@@ -1,15 +1,14 @@
 package com.example.myphotos.ui.image
 
-import android.graphics.Bitmap
 import androidx.lifecycle.*
+import com.example.myphotos.data.AddPhotoResponce
+import com.example.myphotos.data.AddPhotoreqwest
 import com.example.myphotos.data.Photo
+import com.example.myphotos.repositorues.NoteRepository
 import com.example.myphotos.repositorues.PhotoRepository
-import com.example.schoolorgonizer.notes.database.PhotoEntity
-import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
 import java.util.*
 
 class ImageViewModel(
@@ -20,30 +19,21 @@ class ImageViewModel(
 
     val photoLiveData: MutableLiveData<Photo> = MutableLiveData()
 
-//    fun getAddPhoto(body: JsonObject) {
-//        try {
-//            viewModelScope.launch {
-//                val res = withContext(Dispatchers.IO) {
-//                    photoRepository.getAddPhoto(body)
-//                }
-//                photoLiveData.postValue(res)
-//            }
-//
-//        } catch (e: Exception) {
-//            print(e)
-//        }
-//    }
+    fun getAddPhoto(body: AddPhotoreqwest, token: String) {
+        try {
+            viewModelScope.launch {
+                val photo =  withContext(Dispatchers.IO) {
+                   photoRepository.getAddPhoto(body, token)
 
-    fun addPhotoToDatabase(image: String, lat: Double, lon: Double) {
+                }
+                photoLiveData.postValue(photo)
+            }
+        } catch (e: Exception) {
+            print(e)
+        }
+    }
 
-        val newPhoto = PhotoEntity(
-            1,
-            image,
-            SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ROOT).format(System.currentTimeMillis()),
-            lat,
-           lon
-        )
-
+    fun addPhotoToDatabase(newPhoto: Photo) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 photoRepository.addPhoto(newPhoto)
@@ -57,5 +47,9 @@ class ImageViewModel(
         }
     }
 
-
+    fun deletePhotoNetwork(id: Long, token:String) {
+        viewModelScope.launch {
+            photoRepository.deleteAddPhoto(id, token)
+        }
+    }
 }

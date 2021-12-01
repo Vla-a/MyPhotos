@@ -13,7 +13,7 @@ class PhotoEntity(
     @PrimaryKey
     @ColumnInfo(name = "url")
     val url: String,
-    val date: String,
+    val date: Long,
     val lat: Double,
     val lng: Double
 )

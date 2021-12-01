@@ -4,19 +4,12 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myphotos.data.SignUserDtoIn
 import com.example.myphotos.data.User
 import com.example.myphotos.repositorues.UserRepository
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONException
-
-import org.json.JSONObject
-import retrofit2.HttpException
-import java.io.IOException
 
 
 class UserViewModel(
@@ -27,12 +20,12 @@ class UserViewModel(
     val userLiveData2: MutableLiveData<User> = MutableLiveData()
 
 
-    fun getRegist() {
+    fun getRegist(userDto: SignUserDtoIn) {
 
         try {
             viewModelScope.launch {
                 val result = withContext(Dispatchers.IO) {
-                    userRepository.getRegist()
+                    userRepository.getRegist(userDto)
                 }
                 userLiveData.postValue(result)
             }
@@ -44,18 +37,18 @@ class UserViewModel(
 
 
 
-    fun getUser(userDto: JsonObject) {
+    fun getUser(userDto: SignUserDtoIn) {
         try {
-            viewModelScope.launch {
+           viewModelScope.launch {
                 val res = withContext(Dispatchers.IO) {
                     userRepository.getUser(userDto)
                 }
-                userLiveData2.postValue(res)
-            }
+               userLiveData2.postValue(res)
+           }
         } catch (e: Exception) {
             e.printStackTrace()
-           Log.e("RTY", "oufhtgrdsttttttttttttttttttttt")
         }
+
     }
 
 

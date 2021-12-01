@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.myphotos.data.Photo
 import com.example.myphotos.databinding.ItemPhotoBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 class PhotoAdapter(
     private val characterList: MutableList<Photo> = mutableListOf(),
@@ -42,7 +44,7 @@ class PhotoAdapter(
     ) : RecyclerView.ViewHolder(bindingView.root) {
 
         fun bind(item: Photo) {
-            bindingView.textView2.text = item.date
+            bindingView.textView2.text = convertLongToTime(item.date*3600)
 
             Glide
                 .with(itemView.context)
@@ -57,6 +59,11 @@ class PhotoAdapter(
                 delete(item)
                 true
             }
+        }
+        fun convertLongToTime(time: Long): String {
+            val date = Date(time)
+            val format = SimpleDateFormat("yyyy.MM.dd HH:mm")
+            return format.format(date)
         }
     }
 }

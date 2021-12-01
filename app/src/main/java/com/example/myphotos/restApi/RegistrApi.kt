@@ -1,22 +1,19 @@
 package com.example.testcurrency.restApi
 
-import android.util.Log
+import androidx.room.Delete
 import com.example.myphotos.data.AddPhotoResponce
-import com.example.myphotos.data.RegistrResponce
+import com.example.myphotos.data.AddPhotoreqwest
 import com.example.myphotos.data.SignUserDtoIn
+import com.example.myphotos.data.RegistrResponce
 import com.google.gson.JsonObject
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.json.JSONException
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
-import java.lang.Math.log
 import java.util.concurrent.TimeUnit
-import java.util.*
 
 
 interface RegistrApi {
@@ -25,23 +22,30 @@ interface RegistrApi {
     @POST( "/api/account/signup")
     suspend fun getRegist (
 //        @Body userDto : JsonObject = getConvertedinJson()
-        @Body userDto: JsonObject = getConvertedinJson()
+        @Body userDto: SignUserDtoIn
       ): Response<RegistrResponce>
 
     @POST( "/api/account/signin")
     suspend fun getUser (
-        @Body userDto: JsonObject
+        @Body userDto: SignUserDtoIn
     ): Response<RegistrResponce>
 
 
     @POST( "/api/image")
     suspend fun addPhoto(
-        @Body imageDtoIn : JsonObject,
-        @Header("Access-Token") accessToken: String = "N1xW7utIXhNo39lsYh1pRibbbTddi6di3ipAGZIVNOyknMpd3wu6aUBmKEe3gLnS"
+        @Body imageDtoIn : AddPhotoreqwest,
+        @Header("Access-Token") accessToken: String
 
     ): Response<AddPhotoResponce>
 
+    @DELETE( "/api/image/{id}")
+    suspend fun deletePhoto(
+        @Path("id") id : Long,
+        @Header("Access-Token") accessToken: String
 
+    ): Response<AddPhotoResponce>
+
+// "N1xW7utIXhNo39lsYh1pRibbbTddi6di3ipAGZIVNOyknMpd3wu6aUBmKEe3gLnS"
     companion object {
         private const val BASE_URL = "http://junior.balinasoft.com"
 
@@ -61,17 +65,4 @@ interface RegistrApi {
     }
 }
 
-private fun getConvertedinJson(): JsonObject {
-    val `object` = JsonObject()
-    try {
-
-        `object`.addProperty("login", "vladdirec.livvas@tut.by")
-        `object`.addProperty("password", "0012345678900ccc")
-    } catch (e: JSONException) {
-
-        e.printStackTrace()
-    }
-    Log.v("JObj", "$`object`")
-    return `object`
-}
 
